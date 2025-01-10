@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <head>       
+        <title>Изменения: печать</title>
+    </head>
+    <style>
+    @media print {
+      .print-hide {
+        display: none;
+      }
+    }    
+        .fixed-button {
+      position: fixed;
+      top: 20px; /* Вы можете настроить нужное значение отступа сверху */
+      right: 20px; /* Вы можете настроить нужное значение отступа справа */
+    }
+            /* Таблица */
+    table {
+        border-collapse: collapse;
+        width: 675px;
+        font-family: Arial;
+        font-size: 10pt;
+        border-bottom: 2px solid black;
+    }
+    /* Надпись таблицы */
+    caption {
+        font-size: 14pt;
+        font-weight: bold;
+    }
+    /* Заголовки */
+    th {
+        border-left: 2px solid black;
+        border-right: 2px solid black;
+        padding: 8px;
+        vertical-align: top;
+    }
+    #th:first-child td:first-child[value=""] {
+        border-top: 0;
+    }
+    
+    .h1 {
+        width: 150px;
+    }
+    .h2 {
+        width: 50px;
+    }
+    .h3 {
+        width: 275px;
+    }
+    .h4 {
+        width: 275px;
+    }
+    .h5 {
+        width: 70px;
+    }
+    /* Тело */
+    td {
+        border: 2px solid black;
+    }
+    tbody {
+        text-align: left;
+    }
+    /* Стиль для строк, в которых первая ячейка не пуста */
+    tr.non-empty {
+        border-top: 2px solid black;
+    }
+    .c {
+        border-left: 2px solid black;
+        border-right: 2px solid black;
+        border-top: 0px;
+        border-bottom: 0px;
+    }
+    </style>
+    <body>
+        <button id = 'hideButton' class="print-hide fixed-button">Удалить</button>
+        <table id = table>
+            <caption>ГАПОУ ТО «Колледж цифровых и педагогических технологий»<br></br>ИЗМЕНЕНИЯ В РАСПИСАНИИ<br></br>
+                <u>
+                    {% if date %}
+                        {{ date }}
+                    {% else %}
+                        ...
+                    {% endif %}
+                </u><br></br>
+            </caption>
+            <thead>
+                <tr class="non-empty">
+                    <th class="h1">Группа</th>
+                    <th class="h2">№ урока</th>
+                    <th class="h3">По расписанию</th>
+                    <th class="h4">Изменения</th>
+                    <th class="h5">Кабинет</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in changes_data %}
+                    <tr id = {{ row.id }} {% if row.Group %}class="non-empty"{% endif %}>
+                        <th contenteditable="true">{{ row.Group }}</th>
+                        <th contenteditable="true">{{ row.Urok }}</th>
+                        
+                        <th contenteditable="true">
+                        {% if row.Scheduled %}
+                        <div contenteditable="true">{{ row.Scheduled.SubjectId }}</div>
+                        <div contenteditable="true">{{ row.Scheduled.Prepod }}</div>
+                        {% endif %}
+                        </th>
+                        <th contenteditable="true">{{ row.Comment }}<br>{{ row.Subject }}<br>{{ row.Prepod }}</th>
+                        <th contenteditable="true">{{ row.Classroom }}</th>
+                    </tr>
+                    
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    <script>
+
+        let focusedrow
+        let data = {}
+        let a = `{{ date }}`
+        document.getElementById('table').addEventListener('click', function(event){
+            focusedrow = event.target.parentNode;
+        });
+        document.getElementById('hideButton').addEventListener('click', function(event){
+            focusedrow.style.display='none'
+            data[focusedrow.id] = focusedrow.outerHTML
+            localStorage.setItem(a, JSON.stringify(data));
+        });
+        document.addEventListener('blur', function(event) {
+
+        
+            // event.target содержит элемент, который потерял фокус
+            const blurredElement = event.target;
+        
+            // Получаем родительский элемент с помощью parentNode
+            const parentElement = blurredElement.parentNode;
+        
+            // Или можно использовать метод closest для поиска родительского элемента по селектору
+            // Например, если вы ищете родительский элемент с классом "parent-class":
+            // const parentElement = blurredElement.closest('.parent-class');
+            
+            if (parentElement) {
+                data[parentElement.id] = parentElement.outerHTML
+                localStorage.setItem(a, JSON.stringify(data));
+            } else {
+                console.log('Parent Element not found.');
+            }
+        }, true);
+        let ks = localStorage.getItem(a)
+        const aa = JSON.parse(ks)
+        // Проходимся по элементам словаря
+        for (const key in aa) {
+            if (aa.hasOwnProperty(key)) {
+                const value = aa[key];
+                const existingElement = document.getElementById(key);
+                existingElement.outerHTML = value;
+                data[key] = value
+          }
+        }
+        
+
+
+    </script>
+</html>

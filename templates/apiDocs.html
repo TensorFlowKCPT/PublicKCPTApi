@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация к api</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #141414;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        border-radius: 10px;
+        background-color: #0044ff;
+        color: rgb(255, 255, 255);
+        padding: 10px;
+    }
+    h2 {
+        color: rgb(255, 255, 255);
+        margin-top: 20px;
+    }
+    h3 {
+        color: rgb(255, 255, 255);
+        margin-top: 10px;
+    }
+    h4 {
+        color: rgb(255, 255, 255);
+        margin-top: 10px;
+    }
+    a {
+        text-decoration: none;
+        color: #007bff;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    .container {
+        background-color: rgb(40, 40, 40);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+    code
+    {
+        color: rgb(255, 198, 123);
+    }
+    .codecontainer
+    {
+        background-color: rgb(50, 50, 50);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+    #collapsibleDiv {
+    display: none; /* Изначально скрываем div */
+    border: 1px solid #ccc;
+    padding: 10px;
+    }
+    
+    #collapsibleDiv.expanded {
+        display: block; /* При добавлении класса "expanded" показываем div */
+    }
+
+</style>
+<body>
+    <h1>Документация для api расписания</h1>
+    <br>
+    <div class="container">
+        <h2>Получение списка всех групп</h2>
+        <a href="{{ data.link }}/groups">{{ data.link }}/groups</a>
+        <h3>Возвращает список групп массивом в формате json</h3>
+        <div class="codecontainer">
+        <h2>Пример</h2>
+        <code>[<br>
+            "АТ 21-11-1",<br>
+            "АТ 21-11-2",<br>
+            "АТ 21-11-3",<br>
+            ...<br>
+            ]</code>
+        <br>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Получение списка всех преподавателей</h2>
+        <a href="{{ data.link }}/teachers">{{ data.link }}/teachers</a>
+        <br>
+        <h3>Возвращает список преподавателей словарем где ключ = id преподователя, для удобства id есть и внутри объекта преподователя </h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code><br>
+                "1": {<br>
+                    "id": 1,<br>
+                    "FirstName": "В.",<br>
+                    "SecondName": "А.",<br>
+                    "Surname": "Ткачук"<br>
+                    }<br>
+                "2": {<br>
+                    "id": 2,<br>
+                    "FirstName": "В.",<br>
+                    "SecondName": "С.",<br>
+                    "Surname": "Белан"<br>
+                }<br>
+                "3": {<br>
+                    "id": 3,<br>
+                    "FirstName": "И.",<br>
+                    "SecondName": "В.",<br>
+                    "Surname": "Русских"<br>
+                }<br>
+            </code>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Получение списка всех возможных предметов</h2>
+        <a href="{{ data.link }}/subjects">{{ data.link }}/subjects</a>
+        <br>
+        <h3>Возвращает список предметов массивом в формате json</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                [<br>
+                    "Иностранный язык",<br>
+                    "Программирование",<br>
+                    ...<br>
+                ]<br>
+            </code>
+        </div>
+    </div>    
+    <div class="container">
+        <h2>Получение списка всех кабинетов</h2>
+        <a href="{{ data.link }}/classrooms">{{ data.link }}/classrooms</a>
+        <br>
+        <h3>Возвращает список кабинетов массивом в формате json, включая актовый и спортзал</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                [<br>
+                    "101",<br>
+                    "102",<br>
+                    "103",<br>
+                    ...<br>
+                ]<br>
+            </code>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Получение списка изменений по дате</h2>
+        <a href="{{ data.link }}/changes_day?date={{ data.today }}">{{ data.link }}/changes_day?date={{ data.today }}</a>
+        <br>
+        <h2>Дата должна быть именно в таком формате, (%Y-%m-%d)</h2>
+        <h3>Возвращает json словарь изменений для всех групп по дате, где ключ = id изменения, для удобства id есть и внутри объекта изменения</h3>
+        <h4>Delete = Номер урока, который это изменение удаляет из расписания (Если оно это делает)</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                {<br>
+                    "1": {<br>
+                        "id": 1,<br>
+                        "IsChange": true,<br>
+                        "Date": "2023-09-18",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Urok": 6,<br>
+                        "Classroom": "891",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Subject": "Разговоры о важном",<br>
+                        "Comment": "Будет",<br>
+                        "Delete": null<br>
+                    },<br>
+                    "2": {<br>
+                        "id": 2,<br>
+                        "IsChange": true,<br>
+                        "Date": "2023-09-18",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Urok": 6,<br>
+                        "Classroom": "891",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Subject": "Иностранный язык",<br>
+                        "Comment": "Будет",<br>
+                        "Delete": null<br>
+                    },<br>
+                    "3": {<br>
+                        "id": 3,<br>
+                        "IsChange": true,<br>
+                        "Date": "2023-09-18",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Urok": 6,<br>
+                        "Classroom": "891",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Subject": "Программирование",<br>
+                        "Comment": "Будет",<br>
+                        "Delete": 1<br>
+                    },<br>
+                    ...<br>
+                }<br>
+            </code>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Получение расписания сразу с изменениями на день</h2>
+        <a href="{{ data.link }}/class_day?date={{data.today}}&group=ИСиП 21-11-3">{{ data.link }}/class_day?date={{data.today}}&group=ИСиП 21-11-3</a>
+        <br>
+        <h3>Возвращает список уроков на определенную дату и группу</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                {<br>
+                    "5": {<br>
+                        "Subject": "Иностранный язык",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Date": "2023-09-18",<br>
+                        "Number": 5,<br>
+                        "Classroom": "891",<br>
+                        "IsChange": false<br>
+                    },<br>
+                    "6": {<br>
+                        "Date": "2023-09-18",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Number": 6,<br>
+                        "Classroom": "891",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Subject": "Программирование",<br>
+                        "Comment": "Будет",<br>
+                        "Delete": null,<br>
+                        "IsChange": true<br>
+                    }<br>
+                }<br>
+            </code>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Получение расписания сразу с изменениями на неделю</h2>
+        <a href="{{ data.link }}/class_week?date={{data.today}}&group=ИСиП 21-11-3">{{ data.link }}/class_week?date={{data.today}}&group=ИСиП 21-11-3</a>
+        <br>
+        <h3>Возвращает json массивы, в словарях, ключи которых = id уроков, все это в большом словаре, в котором ключи = даты</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                {<br>
+                    "2023-09-18": {<br>
+                        "5": {<br>
+                            "Subject": "Программирование",<br>
+                            "Prepod": "Ткачук В. А.",<br>
+                            "Group": "ИСиП 21-11-3",<br>
+                            "Date": "2023-09-18",<br>
+                            "Number": 5,<br>
+                            "Classroom": "101",<br>
+                            "IsChange": false<br>
+                        },<br>
+                        "6": {<br>
+                            "Date": "2023-09-18",<br>
+                            "Group": "ИСиП 21-11-3",<br>
+                            "Number": 6,<br>
+                            "Classroom": "102",<br>
+                            "Prepod": "Ткачук В. А.",<br>
+                            "Subject": "Иностранный язык",<br>
+                            "Comment": "Будет",<br>
+                            "Delete": null,<br>
+                            "IsChange": true<br>
+                        }<br>
+                    },<br>
+                    "2023-09-19": {<br>
+                        "7": {<br>
+                            "Subject": "Разговоры о важном",<br>
+                            "Prepod": "Ткачук В. А.",<br>
+                            "Group": "ИСиП 21-11-3",<br>
+                            "Date": "2023-09-19",<br>
+                            "Number": 5,<br>
+                            "Classroom": "103",<br>
+                            "IsChange": false<br>
+                        },<br>
+                        "8": {<br>
+                            "Date": "2023-09-19",<br>
+                            "Group": "ИСиП 21-11-3",<br>
+                            "Number": 6,<br>
+                            "Classroom": "С/з",<br>
+                            "Prepod": "Ткачук В. А.",<br>
+                            "Subject": "Физкультура",<br>
+                            "Comment": "Будет",<br>
+                            "Delete": null,<br>
+                            "IsChange": true<br>
+                        }<br>
+                    },<br>
+                }<br>
+            </code>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Получение расписания преподователя на день</h2>
+        <a href="{{data.link}}/teacher_day?date={{data.today}}&teacher=Ткачук В. А.">{{data.link}}/teacher_day?date={{data.today}}&teacher=Ткачук В. А.</a>
+        <h3>ФИО преподователя должно быть именно в таком формате, с пробелами между И и О, (Так как Иногда ФИО в расписании пишется не инициалами, а полностью)</h3>
+        <h3>Возвращает словарь словарей, ключи в котором = номер урока</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                {<br>
+                    "5": {<br>
+                        "IsChange": false,<br>
+                        "Subject": "Программирование",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Date": "2023-09-18",<br>
+                        "Number": 5,<br>
+                        "Classroom": "101"<br>
+                    },<br>
+                    "6": {<br>
+                        "IsChange": true,<br>
+                        "Date": "2023-09-18",<br>
+                        "Group": "ИСиП 21-11-3",<br>
+                        "Number": 6,<br>
+                        "Classroom": "891",<br>
+                        "Prepod": "Ткачук В. А.",<br>
+                        "Subject": "Иностранный язык",<br>
+                        "Comment": "Будет",<br>
+                        "Delete": null<br>
+                    }<br>
+                }<br>
+            </code>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Получение расписания преподователя на неделю</h2>
+        <a href="{{data.link}}/teacher_week?date={{data.today}}&teacher=Ткачук В. А.">{{data.link}}/teacher_week?date={{data.today}}&teacher=Ткачук В. А.</a>
+        <h3>ФИО преподователя должно быть именно в таком формате, с пробелами между И и О, (Так как Иногда ФИО в расписании пишется не инициалами, а полностью)</h3>
+        <h3>Возвращает словарь словарей, ключи в котором = дата, ключи в которых - номера уроков</h3>
+        <div class="codecontainer">
+            <h2>Пример</h2>
+            <code>
+                {<br>
+                    "2023-09-18": {<br>
+                        "5": {<br>
+                            "IsChange": false,<br>
+                            "Subject": "Иностранный язык",<br>
+                            "Prepod": "Ткачук В. А.",<br>
+                            "Group": "ИСиП 21-11-3",<br>
+                            "Date": "2023-09-18",<br>
+                            "Number": 5,<br>
+                            "Classroom": "891"<br>
+                        },<br>
+                        "6": {<br>
+                            "IsChange": true,<br>
+                            "Date": "2023-09-18",<br>
+                            "Group": "ИСиП 21-11-3",<br>
+                            "Number": 6,<br>
+                            "Classroom": "891",<br>
+                            "Prepod": "Ткачук В. А.",<br>
+                            "Subject": "Программирование",<br>
+                            "Comment": "Будет",<br>
+                            "Delete": null<br>
+                        }<br>
+                    },<br>
+                    ...<br>
+                }<br>
+            </code>
+        </div>
+    </div>
+</body>
+</html>

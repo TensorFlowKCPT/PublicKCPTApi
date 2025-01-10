@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Изменения: администрирование</title>
+</head>
+<body>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <button id="closeModal" class="close-button">×</button>
+            <div>
+                <div>
+                    <form class="container" id="myForm" method="POST" action="/admin/AddChange?date={{ data.date }}">
+                        <div class="date-picker">
+                        <label for="date">Выберите дату:</label>
+                        <input type="date" id="datePicker">
+                    </div>
+                    <input type="hidden" id="changeIdinput" name="changeIdinput" value="">
+                    <input type="hidden" id="buttonValue" name="buttonValue" value="">
+                    <div class="izmen-separator">По расписанию</div>
+        
+                    <div class="select-group">
+                        <label for="selectGroup">Группа:</label>
+                        <select id="selectGroup" name="group" placeholder="Выберите группу">
+                            <option selected>Выберите группу</option>
+                            {% for group in data.Groups %}
+                                <option>{{ group | join }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+        
+                    <div class="container">
+                        <div class="select-group">
+                            <label for="startSelect">Начало:</label>
+                            <select id="startSelect" name="startSelect">
+                                {% for value in range(1, 13) %}
+                                    <option value="{{ value }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <div class="select-group">
+                            <label for="endSelect">Конец:</label>
+                            <select id="endSelect" name="endSelect">
+                                {% for value in range(1, 13) %}
+                                    <option value="{{ value }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="izmen-separator">Изменение</div>
+        
+                    <div class="select-group">
+                        <label for="changeStatusSelect">Статус изменения:</label>
+                        <input type="text" id="changeStatusSelect" name="changeStatusSelect" class="input-status"></input>
+                    </div>
+        
+                    <div class="container">
+                        <div class="select-group">
+                            <label for="startChangeSelect">Начало:</label>
+                            <select id="startChangeSelect" name="startChangeSelect">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+        
+                        <div class="select-group">
+                            <label for="endChangeSelect">Конец:</label>
+                            <select id="endChangeSelect" name="endChangeSelect">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="select-group">
+                        <label for="selectChangePrepod">Преподаватель:</label>
+                        <select id="selectChangePrepodavatel" name="prepodChange" placeholder="Выберите преподавателя">
+                            <option selected>Выберите преподавателя</option>
+                            {% for prepod in data.Prepods %}
+                                <option>{{ prepod | join }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="selectChangeSubject">Предмет:</label>
+                        <select id="selectChangeSubject" name="subjectChange" placeholder="Выберите предмет">
+                            <option selected>Выберите предмет</option>
+                            {% for subject in data.Subjects %}
+                                <option>{{ subject | join }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+        
+                    <div class="select-group">
+                        <label for="selectChangeClassroom">Кабинет:</label>
+                        <select id="cabinetChange" name="cabinetChange" placeholder="Выберите кабинет">
+                            <option selected class="placeholder">Выберите кабинет</option>
+                            <option class="placeholder">Без изменений</option>
+                            {% for cabinets in data.Classrooms %}
+                                <option>{{ cabinets | join }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button id="addChangeButton" type="submit" class="button" onclick="setButtonValue('add')" style="display: none;">Добавить</button>
+                    <button id="redactChangeButton" type="submit" class="button" style="display: none;" onclick="setButtonValue('edit')">Изменить</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <h1 class="header">Панель администратора</h1>
+    <label for="date-selector" class="label">Дата изменений</label>
+    <div class="date-picker">
+        <div class="date-picker">
+            <form id="date-form" method="get" action="/admin/ChangesPage">
+                <label for="date">Выберите дату:</label>
+                <input type="date" id="date" name="date" value="{{ data.date }}">
+            </form>
+        </div>
+    </div>    
+        <div class="buttons">
+        <button class="button" id="printButton">Печать</button>
+        <button class="button" id="printExcel">Скачать Excel</button>
+        <button style="margin-left: 10px;" class="button" onclick='openModal("addButton");' data-operation="add">Добавить</button>
+        <form action="/admin/ParsKCPT" method="post">
+            <button style="margin-left: 10px;" class="button" type="submit">Проверить Excel</button>
+        </form>
+        <a href="/admin/ShowSchedule?date={{ data.date }}" style="margin-left: 10px;" class="button">Вывести итоговое расписание</a>
+    </div>
+    <div>
+        <table id="table">
+            <thead>
+            <tr>
+                <th class="h2">Группа</th>
+                <th class="h3">№ урока</th>
+                <th class="h4">По расписанию</th>
+                <th class="h5">Изменения</th>
+                <th class="h6">Статус</th>
+                <th class="h7">Кабинет</th>
+                <th class="h8">Изменить</th>
+                <th class="h9">Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% if data.Changes %}
+                {% for change in data.Changes %}
+                <tr>
+                    <td>{{ change.Group }}</td>
+                    <td>{{ change.Urok }}</td>
+                    <td>
+                        {% if change.Scheduled %}
+                        <div>{{ change.Scheduled.SubjectId }}</div>
+                        <div>{{ change.Scheduled.Prepod }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div>{{ change.Subject }}</div>
+                        <div>{{ change.Prepod }}</div>
+
+                    </td>
+                    <td>{{ change.Comment }}</td>
+                    <td>{{ change.Classroom }}</td>
+                    <td>
+                        <div id="buttonContainer">                            
+                            <button id="redactChange" style="margin-left: 10px;" onclick='openModal("redactChange");' class="button" data-value="{{ change.id }}" data-operation="edit">Изменить</button>
+                        </div>
+                    </td>
+                    <td>
+                        <button class='post-button' data-value="{{ change.id }}" onclick="">Удалить</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7">Нет изменений на выбранную дату.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+            
+        </table>
+    </div>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .close-button {
+    position: absolute;
+    top: 10px;
+    color: black;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 50px;
+    cursor: pointer;
+}
+    .close-button:hover {
+        color: red; 
+    }
+
+    .placeholder{
+        color: gray;
+    }
+
+    .date-picker {
+        grid-column: span 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+    .modal-content {
+         background-color: #fff;
+         margin: 10% auto;
+         padding: 20px;
+         border-radius: 5px;
+         width: 70%;
+         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+         position: relative;
+        }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        }
+
+    .izmen-separator {
+        grid-column: span 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+    .select-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0; 
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .input-status{
+        width: 95%;
+        padding: 10px;
+        margin: 10px 0; 
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    select:not(:last-child) {
+        border-bottom: 1px solid #ccc; 
+    }
+
+    button {
+        padding: 20px 40px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        border-radius: 6px;
+        
+        cursor: pointer;
+    }
+
+    .post-button {
+        padding: 11px 30px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        border-radius: 6px;
+        
+        cursor: pointer;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        grid-column: span 3;
+        margin-bottom: 20px;
+    }
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            text-align: center;
+            padding-top: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            padding: 10px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px; 
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            font-size: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse; 
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd; 
+        }  
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: transparent;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .close-button {
+        position: absolute;
+        top: 10px;
+        color: black;
+        right: 10px;
+        background-color: transparent;
+        border: none;
+        font-size: 50px;
+        cursor: pointer;
+    }
+    .close-button:hover {
+        color: red; 
+    }
+
+    .placeholder{
+        color: gray;
+    }
+
+    .date-picker {
+        grid-column: span 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+    .modal-content {
+         background-color: #fff;
+         margin: 10% auto;
+         padding: 20px;
+         border-radius: 5px;
+         width: 70%;
+         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+         position: relative;
+        }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        }
+    </style>
+
+<script>
+    function openModal(buttonId) {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "block";
+
+        var addButton = document.getElementById("addChangeButton");
+        var redactButton = document.getElementById("redactChangeButton");
+
+        var operation = buttonId === "addButton" ? "add" : "edit";
+
+        if (operation === "add") {
+            addButton.style.display = "block";
+            redactButton.style.display = "none";
+        } else if (operation === "edit") {
+            addButton.style.display = "none";
+            redactButton.style.display = "block";
+
+            // Получите выбранный элемент строки
+            var selectedRow = document.querySelector(".selected-row");
+
+            // Получите данные из атрибутов data- и отобразите их в модальном окне
+            document.getElementById("selectGroup").value = selectedRow.getAttribute("data-group");
+            document.getElementById("datePicker").value = selectedRow.getAttribute("data-date");
+            // Продолжайте также для других полей
+        }
+    }
+    function setButtonValue(value) {
+            document.getElementById('buttonValue').value = value;
+            document.getElementById('myForm').submit(); // Отправка формы после установки значения
+        }
+    function closeModal() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    document.getElementById("printButton").addEventListener("click", function() {
+        window.location.href = "/admin/printChanges?date={{ data.date }}";
+    });
+
+    document.getElementById("printExcel").addEventListener("click", function() {
+        window.location.href = "/admin/printExcel?date={{ data.date }}";
+    });
+
+    document.getElementById("redactChangeButton").addEventListener("click", function() {
+        var changeId = this.getAttribute("data-id");
+
+    });
+
+    // JavaScript-код для отправки POST-запроса
+    var buttons = document.querySelectorAll(".post-button")
+    buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var valueToSend = button.getAttribute("data-value");
+        
+            // Создайте POST-запрос и отправьте его с помощью JavaScript
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/admin/DeleteChange", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Обработка успешного ответа от сервера
+                }
+            };
+            xhr.send("id=" + encodeURIComponent(valueToSend));
+            location.reload()
+        });
+    });
+    document.getElementById("closeModal").addEventListener("click", closeModal);
+
+
+        // Получаем элемент datepicker по его идентификатору
+        let datePicker = document.getElementById("datePicker");
+
+        // Получаем текущую дату
+        let currentDate = new Date();
+
+        // Форматируем дату в строку YYYY-MM-DD
+        let year = currentDate.getFullYear();
+        let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        let day = currentDate.getDate().toString().padStart(2, '0');
+        let formattedDate = `${year}-${month}-${day}`;
+
+        // Устанавливаем текущую дату в поле ввода
+        datePicker.value = formattedDate;
+
+
+
+        // Получаем элемент поля ввода даты
+        var dateInput = document.getElementById("date");
+
+        // Добавляем обработчик события на изменение значения
+        dateInput.addEventListener("change", function () {
+            // Сразу после изменения даты отправляем форму
+            document.getElementById("date-form").submit();
+        });
+
+        // Обработчик события для кнопки "Изменить"
+        document.getElementById("redactChangeButton").addEventListener("click", function() {
+            var changeId = this.getAttribute("data-id");
+
+            closeModal();
+        });
+
+        function openModalForEdit(button) {
+            // Получить значение data-value из кнопки
+            var changeId = button.getAttribute('data-value');
+            
+            // Очистить поля формы
+            document.getElementById('selectGroup').value = '';
+            document.getElementById('startSelect').value = '';
+            document.getElementById('endSelect').value = '';
+            document.getElementById('selectChangePrepodavatel').value = '';
+            document.getElementById('selectChangeSubject').value = '';
+            document.getElementById('changeStatusSelect').value = '';
+            document.getElementById('cabinetChange').value = '';
+            
+            // AJAX-запрос для получения данных из сервера
+            fetch('/admin/GetChangeData?change=' + changeId)
+                .then(response => response.json())
+                .then(data => {
+                    // Заполнить модальное окно данными из ответа сервера
+                    document.getElementById('changeIdinput').value = changeId;
+                    document.getElementById('selectGroup').value = data.selectGroup;
+                    document.getElementById('startSelect').value = data.startSelect;
+                    document.getElementById('endSelect').value = data.endSelect;
+                    document.getElementById('selectChangePrepodavatel').value = data.selectChangePrepod;
+                    document.getElementById('selectChangeSubject').value = data.selectChangeSubject;
+                    document.getElementById('changeStatusSelect').value = data.changeStatusSelect;
+                    document.getElementById('cabinetChange').value = data.selectChangeClassroom;
+                    
+
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+        // Добавьте обработчик события click к кнопкам "Изменить"
+        var editButtons = document.querySelectorAll('[data-operation="edit"]');
+        editButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                openModalForEdit(this);
+            });
+        });
+</script>
+</body>
+</html>

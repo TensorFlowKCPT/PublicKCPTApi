@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание занятий</title>
+    <style>
+        /* Стили для таблицы */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .marked {
+        font-weight: bold; /* Жирный текст */
+        color: rgb(235, 0, 0); /* Красный цвет текста */
+        }
+    </style>
+</head>
+<body>
+    <h1>Расписание занятий на {{date}}</h1>
+    {% for group, schedule in schedule_data.items() %}
+    <h2>{{ group }}</h2>
+    <table>
+        <tr>
+            <th>Урок</th>
+            <th>Предмет</th>
+            <th>Преподаватель</th>
+            <th>Кабинет</th>
+        </tr>
+        {% for number, lessons in schedule.items() %}
+        {% for lesson in lessons %}
+        <tr class="{% if '?' in lesson['Subject'] or '?' in lesson['Prepod'] or '?' in lesson['Classroom'] %}marked{% endif %}">
+            <td>{{ number }}</td>
+            <td>{{ lesson['Subject'] }}</td>
+            <td>{{ lesson['Prepod'] }}</td>
+            <td>{{ lesson['Classroom'] }}</td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </table>
+    {% endfor %}
+</body>
+</html>
